@@ -20,6 +20,7 @@ const page = async () => {
   const data = await res.json();
 
   const mainAction = async (formData: FormData) => {
+    "use server";
     const image = formData.get("image") as File;
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
@@ -60,7 +61,7 @@ const page = async () => {
       </div>
 
       <div>
-        <form className="w-[300px]">
+        <form action={mainAction} className="w-[300px]">
           <div className="flex flex-col mb-3">
             <label className="font-bold uppercase text-[12px] mb-2">
               title
@@ -100,7 +101,10 @@ const page = async () => {
             />
           </div>
 
-          <button className="w-full h-[55px] bg-black text-white flex items-center justify-center mt-4 rounded-md">
+          <button
+            type="submit"
+            className="w-full h-[55px] bg-black text-white flex items-center justify-center mt-4 rounded-md"
+          >
             Make Post
           </button>
         </form>

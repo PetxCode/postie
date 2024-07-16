@@ -21,7 +21,7 @@ const page = async () => {
       </div>
 
       <div>
-        {data?.data?.map((el: any) => (
+        {data?.post?.map((el: any) => (
           <div
             key={el._id}
             className="border rounded-md overflow-hidden w-[300px] h-[400px]"
