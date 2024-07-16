@@ -1,8 +1,11 @@
+import { currentUser } from "@clerk/nextjs/server";
 import React from "react";
 
 const page = async () => {
   const url = process.env.HOST_URL as string;
-  const res = await fetch(`${url}/api/post`, {
+  const user = await currentUser();
+  const userID = user?.publicMetadata?.userId;
+  const res = await fetch(`${url}/api/${userID}`, {
     method: "GET",
     cache: "no-cache",
     next: {

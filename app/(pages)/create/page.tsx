@@ -1,8 +1,14 @@
+import cloudinary from "@/utils/cloudinary";
+import { currentUser } from "@clerk/nextjs/server";
+import { revalidateTag } from "next/cache";
 import React from "react";
 import { MdPhotoCamera } from "react-icons/md";
 
 const page = async () => {
+  const user = await currentUser();
+  const userID = user?.publicMetadata?.userId;
   const url = process.env.HOST_URL as string;
+
   const res = await fetch(`${url}/api/post`, {
     method: "GET",
     cache: "no-cache",
@@ -12,6 +18,41 @@ const page = async () => {
   });
 
   const data = await res.json();
+
+  const mainAction = async (formData: FormData) => {
+    const image = formData.get("image") as File;
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+
+    const file = await image.arrayBuffer();
+    const buffer = new Uint8Array(file);
+
+    const { secure_url }: any = await new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream({}, (err, result) => {
+          if (err) {
+            return reject(err);
+          } else {
+            return resolve(result);
+          }
+        })
+        .end(buffer);
+    });
+
+    await fetch(`${url}/api/${userID}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ipostImage: secure_url,
+        title,
+        content,
+      }),
+    });
+
+    revalidateTag("post");
+  };
   return (
     <div>
       <div className="my-10 font-semibold text-[12px] text-center">
