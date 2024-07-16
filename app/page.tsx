@@ -2,6 +2,7 @@ import React from "react";
 
 const page = async () => {
   const url = process.env.HOST_URL as string;
+
   const res = await fetch(`${url}/api/post`, {
     method: "GET",
     cache: "no-cache",
@@ -11,6 +12,8 @@ const page = async () => {
   });
 
   const data = await res.json();
+
+  console.log(data.data);
   return (
     <div>
       <div className="my-10 font-semibold text-[12px] text-center">
