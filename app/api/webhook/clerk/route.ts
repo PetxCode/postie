@@ -69,31 +69,23 @@ export async function POST(req: Request) {
     //   photo: string;
 
     const user = {
-      userID: id,
+      clerkID: id,
       email: email_addresses[0].email_address,
       name: first_name!,
       firstName: first_name,
       lastName: last_name,
-      photo: image_url,
+      avatar: image_url,
     };
 
-    console.log(user);
-    console.log(
-      id,
-      email_addresses[0].email_address,
-      image_url,
-      first_name,
-      last_name,
-      username
-    );
+    const newUser = await userModel.create(user);
 
-    // if (newUser) {
-    //   await clerkClient.users.updateUserMetadata(id, {
-    //     publicMetadata: {
-    //       userId: newUser._id,
-    //     },
-    //   });
-    // }
+    if (newUser) {
+      await clerkClient.users.updateUserMetadata(id, {
+        publicMetadata: {
+          userId: newUser._id,
+        },
+      });
+    }
 
     return NextResponse.json({ message: "New user created", user });
   }
